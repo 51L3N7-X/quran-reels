@@ -10,6 +10,7 @@ const nodeCanvas = require("canvas");
  * @property {number} enMaxWidth - English translation text max width used to warp words (default: 540)
  * @property {number} margin - Amount of spacing between the Arabic text and English translation (default: 30)
  * @property {string} color - Text color (default: #ffffff)
+ * @property {string} highlightColor - Highlighted word color (default: #ffaa55)
  * @property {string} background - Image Background color (default: #000000)
  * @property {string} arFont - Font size and family used for rendering the Arabic ayah text
  * @property {string} enFont - Font size and family used for rendering the English translation text
@@ -26,6 +27,7 @@ const defaultImagesGeneratorOptions = {
   enMaxWidth: 540,
   margin: 30,
   color: "#ffffff",
+  highlightColor: "#ffaa55",
   background: "#000000",
   arFont: "",
   enFont: "",
@@ -35,6 +37,7 @@ const defaultImagesGeneratorOptions = {
  * @typedef ImageOptions
  * @type {Object}
  * @property {string} text - Arabic ayah text
+ * @property {number} highlight -  Index of the word that should be highlighted
  * @property {string} translation - English ayah translation text (default: "No translation provided")
  */
 
@@ -43,6 +46,7 @@ const defaultImagesGeneratorOptions = {
  */
 const defaultImageOptions = {
   text: "",
+  highlight: -1,
   translation: "No translation provided",
 };
 
@@ -99,6 +103,7 @@ module.exports = class imagesGenerator {
       text: opt.translation,
       font: this.#options.enFont,
       maxWidth: this.#options.enMaxWidth,
+      highlight: -1,
     });
 
     // render Arabic ayah
@@ -106,6 +111,7 @@ module.exports = class imagesGenerator {
       text: opt.text,
       font: this.#options.arFont,
       maxWidth: this.#options.arMaxWidth,
+      highlight: opt.highlight,
       up: true,
     });
 
@@ -117,6 +123,7 @@ module.exports = class imagesGenerator {
    * @param {string} options.text
    * @param {string} options.font
    * @param {number} options.maxWidth
+   * @param {number} options.highlight
    * @param {boolean} options.up
    *
    * @returns {void}
@@ -125,15 +132,26 @@ module.exports = class imagesGenerator {
     // setup ctx
     this.#ctx.font = options.font;
 
-    // parse text into lines based on maxWidth
+    // parse text into lines based on maxWidth, also get information about the highlight word
     const lines = [""];
     const words = options.text.split(" ");
     let l = 0;
+    let highlightWord = {
+      line: -1,
+      start: -1,
+      end: -1,
+    };
     for (let j = 0; j < words.length; j++) {
       const word = words[j];
       if (this.#ctx.measureText(`${lines[l]}${word}`).width < options.maxWidth)
         lines[l] += `${word} `;
       else lines[++l] = `${word} `;
+      if (j === options.highlight)
+        highlightWord = {
+          line: l,
+          start: lines[l].length - word.length - 1,
+          end: lines[l].length,
+        };
     }
 
     // remove extra space from last line
@@ -150,6 +168,26 @@ module.exports = class imagesGenerator {
         lineHeight * i +
         (this.#options.margin / 2) * (options.up ? -1 : 1);
       this.#ctx.fillText(lines[i], this.#centerX, lineY);
+    }
+
+    // highlight word
+    if (highlightWord.line !== -1) {
+      const line = lines[highlightWord.line];
+      const lineY =
+        this.#centerY +
+        lineHeight * (options.up ? -lines.length + 1 : 1) +
+        lineHeight * highlightWord.line +
+        (this.#options.margin / 2) * (options.up ? -1 : 1);
+
+      const preWord = line.slice(0, highlightWord.end);
+      const word = line.slice(highlightWord.start, highlightWord.end);
+      const rightMargin = this.#ctx.measureText(preWord).width;
+      const wordWidth = this.#ctx.measureText(word).width;
+      const lineWidth = this.#ctx.measureText(line).width;
+
+      this.#ctx.fillStyle = this.#options.highlightColor;
+      const wordX = this.#centerX + lineWidth / 2 - rightMargin + wordWidth / 2;
+      this.#ctx.fillText(word, wordX, lineY);
     }
   }
 };
