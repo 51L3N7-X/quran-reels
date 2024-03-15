@@ -1,0 +1,3 @@
+{
+  "src/*": ["prettier --write", "eslint --fix", "eslint"]
+}
