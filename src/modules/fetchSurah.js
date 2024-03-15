@@ -1,4 +1,3 @@
-const { quran } = require("@quranjs/api");
 const axios = require("axios");
 const fetch = async (path) =>
   (await axios(`https://api.qurancdn.com/api/${path}`)).data;
