@@ -1,4 +1,5 @@
 const axios = require("axios");
+
 const fetch = async (path, params = {}) =>
   (
     await axios.get(
@@ -25,7 +26,7 @@ const fetch = async (path, params = {}) =>
  * @property {string} translation - English ayah translation text
  * @property {number} start - Ayah start timestamp
  * @property {number} end - Ayah end timestamp
- * @property {[number, number]} words
+ * @property {[number, number, number]} words - An array of [index, start, end] collections
  */
 
 /**
@@ -33,7 +34,7 @@ const fetch = async (path, params = {}) =>
  * @type {Object}
  * @property {number} id - Surah index
  * @property {AudioFile} audio
- * @property {Ayah[]} ayat
+ * @property {Ayah[]} ayahs
  */
 
 /**
