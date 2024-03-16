@@ -82,7 +82,7 @@ export default async function fetchSurah(options) {
       .filter(
         (v) => v.verse_number >= options.from && v.verse_number <= options.to,
       )
-      .map((v, i) => ({
+      .map((v) => ({
         //
         id: v.verse_number,
         //
@@ -96,7 +96,7 @@ export default async function fetchSurah(options) {
         start: audioData.verse_timings[v.verse_number - 1].timestamp_from,
         end: audioData.verse_timings[v.verse_number - 1].timestamp_to,
         //
-        words: audioData.verse_timings[i].segments
+        words: audioData.verse_timings[v.verse_number - 1].segments
           .filter((s) => s.length > 2)
           .map((s) => [s[0] - 1, s[1], s[2]]),
         //
