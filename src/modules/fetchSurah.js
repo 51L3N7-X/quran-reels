@@ -93,8 +93,8 @@ export default async function fetchSurah(options) {
         quranText: v.words.map((w) => [w.code_v1, `p${w.page_number}`]),
         translation: v.translations[0].text.replace(/<.*>/, ""),
         //
-        start: audioData.verse_timings[i].timestamp_from,
-        end: audioData.verse_timings[i].timestamp_to,
+        start: audioData.verse_timings[v.verse_number - 1].timestamp_from,
+        end: audioData.verse_timings[v.verse_number - 1].timestamp_to,
         //
         words: audioData.verse_timings[i].segments
           .filter((s) => s.length > 2)
