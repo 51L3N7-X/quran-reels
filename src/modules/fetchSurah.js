@@ -1,6 +1,12 @@
 const axios = require("axios");
-const fetch = async (path) =>
-  (await axios(`https://api.qurancdn.com/api/${path}`)).data;
+const fetch = async (path, params = {}) =>
+  (
+    await axios.get(
+      `https://api.qurancdn.com/api/${path}?${Object.entries(params)
+        .map(([k, v]) => `${k}=${v}`)
+        .join("&")}`,
+    )
+  ).data;
 
 /**
  * @typedef AudioFile
@@ -38,27 +44,33 @@ const fetch = async (path) =>
  * @param {number} options.from - First ayah index (1-indexed, 0 = last)
  * @param {number} options.to - Last ayah index (1-indexed, 0 = last)
  *
- * @returns {SurahData}
+ * @returns {SurahData} surahData
  */
 module.exports = async function fetchSurah(options) {
   const audioData = (
-    await fetch(
-      `qdc/audio/reciters/${options.reciter}/audio_files?chapter=${options.id}&segments=true`,
-    )
+    await fetch(`qdc/audio/reciters/${options.reciter}/audio_files`, {
+      chapter: options.id,
+      regments: true,
+    })
   ).audio_files[0];
 
-  let versesData = (
-    await fetch(
-      `v4/verses/by_chapter/${options.id}?words=true&word_fields=text_uthmani&translations=${options.translator}`,
-    )
-  ).verses;
-  versesData = versesData.map((v) => ({
-    ...v,
-    words: v.words.filter((w) => w.char_type_name === "word"),
-  }));
+  const verses = [];
+  let page = 1;
 
-  while (options.from <= 0) options.to += versesData.length;
-  while (options.to <= 0) options.to += versesData.length;
+  while (true) {
+    const versesData = await fetch(`v4/verses/by_chapter/${options.id}`, {
+      words: true,
+      word_fields: ["text_uthmani"],
+      translations: options.translator,
+      per_page: 50,
+      page: page++,
+    });
+    verses.push(...versesData.verses);
+    if (versesData.pagination.next_page === null) break;
+  }
+
+  while (options.from <= 0) options.to += verses.length;
+  while (options.to <= 0) options.to += verses.length;
 
   return {
     id: options.id,
@@ -70,7 +82,7 @@ module.exports = async function fetchSurah(options) {
       duration: audioData.duration,
     },
 
-    ayahs: versesData
+    ayahs: verses
       .filter(
         (v) => v.verse_number >= options.from && v.verse_number <= options.to,
       )
@@ -78,7 +90,10 @@ module.exports = async function fetchSurah(options) {
         //
         id: v.verse_number,
         //
-        text: v.words.map((w) => w.text_uthmani).join(" "),
+        text: v.words
+          .filter((w) => w.char_type_name === "word")
+          .map((w) => w.text_uthmani)
+          .join(" "),
         translation: v.translations[0].text.replace(/<.*>/, ""),
         //
         start: audioData.verse_timings[i].timestamp_from,
