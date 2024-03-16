@@ -23,6 +23,7 @@ const fetch = async (path, params = {}) =>
  * @type {Object}
  * @property {number} id - Ayah number
  * @property {string} text - Arabic ayah text
+ * @property {[string, string][]} quranText - An array of [wrod, font] pairs
  * @property {string} translation - English ayah translation text
  * @property {number} start - Ayah start timestamp
  * @property {number} end - Ayah end timestamp
@@ -61,7 +62,7 @@ module.exports = async function fetchSurah(options) {
   while (true) {
     const versesData = await fetch(`v4/verses/by_chapter/${options.id}`, {
       words: true,
-      word_fields: ["text_uthmani"],
+      word_fields: ["text_uthmani", "code_v1"],
       translations: options.translator,
       per_page: 50,
       page: page++,
@@ -95,6 +96,7 @@ module.exports = async function fetchSurah(options) {
           .filter((w) => w.char_type_name === "word")
           .map((w) => w.text_uthmani)
           .join(" "),
+        quranText: v.words.map((w) => [w.code_v1, `p${w.page_number}`]),
         translation: v.translations[0].text.replace(/<.*>/, ""),
         //
         start: audioData.verse_timings[i].timestamp_from,
