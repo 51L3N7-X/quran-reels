@@ -14,6 +14,7 @@ module.exports = {
     "no-await-in-loop": ["off"],
     "no-param-reassign": ["off"],
     "implicit-arrow-linebreak": ["off"],
+    "import/extensions": ["off"],
 
     "prettier/prettier": [
       "error",

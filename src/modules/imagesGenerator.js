@@ -1,4 +1,4 @@
-const nodeCanvas = require("canvas");
+import nodeCanvas from "canvas";
 
 /**
  * @typedef ImagesGeneratorOptions
@@ -50,7 +50,7 @@ const defaultImageOptions = {
   translation: "No translation provided",
 };
 
-module.exports = class imagesGenerator {
+export default class imagesGenerator {
   /** @type {ImagesGeneratorOptions} */
   #options;
 
@@ -190,4 +190,4 @@ module.exports = class imagesGenerator {
       this.#ctx.fillText(word, wordX, lineY);
     }
   }
-};
+}

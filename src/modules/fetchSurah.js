@@ -1,4 +1,4 @@
-const axios = require("axios");
+import axios from "axios";
 
 const fetch = async (path, params = {}) =>
   (
@@ -48,7 +48,7 @@ const fetch = async (path, params = {}) =>
  *
  * @returns {SurahData} surahData
  */
-module.exports = async function fetchSurah(options) {
+export default async function fetchSurah(options) {
   const audioData = (
     await fetch(`qdc/audio/reciters/${options.reciter}/audio_files`, {
       chapter: options.id,
@@ -108,4 +108,4 @@ module.exports = async function fetchSurah(options) {
         //
       })),
   };
-};
+}
