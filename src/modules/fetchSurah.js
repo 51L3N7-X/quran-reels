@@ -27,7 +27,7 @@ const fetch = async (path, params = {}) =>
  * @property {string} translation - English ayah translation text
  * @property {number} start - Ayah start timestamp
  * @property {number} end - Ayah end timestamp
- * @property {[number, number, number]} words - An array of [index, start, end] collections
+ * @property {[number, number, number][]} words - An array of [index, start, end] collections
  */
 
 /**
