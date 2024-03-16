@@ -52,7 +52,7 @@ module.exports = async function fetchSurah(options) {
   const audioData = (
     await fetch(`qdc/audio/reciters/${options.reciter}/audio_files`, {
       chapter: options.id,
-      regments: true,
+      segments: true,
     })
   ).audio_files[0];
 
