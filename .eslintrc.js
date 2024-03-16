@@ -11,6 +11,9 @@ module.exports = {
     "operator-linebreak": ["off"],
     curly: ["off"],
     "nonblock-statement-body-position": ["off"],
+    "no-await-in-loop": ["off"],
+    "no-param-reassign": ["off"],
+    "implicit-arrow-linebreak": ["off"],
 
     "prettier/prettier": [
       "error",
