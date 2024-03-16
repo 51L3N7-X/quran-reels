@@ -35,7 +35,7 @@ const fetch = async (path, params = {}) =>
  * @type {Object}
  * @property {number} id - Surah index
  * @property {AudioFile} audio
- * @property {Ayah[]} ayahs
+ * @property {Ayah[]} ayat
  */
 
 /**
@@ -84,7 +84,7 @@ module.exports = async function fetchSurah(options) {
       duration: audioData.duration,
     },
 
-    ayahs: verses
+    ayat: verses
       .filter(
         (v) => v.verse_number >= options.from && v.verse_number <= options.to,
       )
