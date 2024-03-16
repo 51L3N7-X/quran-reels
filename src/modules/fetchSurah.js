@@ -101,7 +101,7 @@ module.exports = async function fetchSurah(options) {
         end: audioData.verse_timings[i].timestamp_to,
         //
         words: audioData.verse_timings[i].segments
-          .filter((s) => s.length > 1)
+          .filter((s) => s.length > 2)
           .map((s) => [s[0] - 1, s[1], s[2]]),
         //
       })),
