@@ -1,13 +1,7 @@
-import axios from "axios";
+import cachedFetch from "./cachedFetch.js";
 
 const fetch = async (path, params = {}) =>
-  (
-    await axios.get(
-      `https://api.qurancdn.com/api/${path}?${Object.entries(params)
-        .map(([k, v]) => `${k}=${v}`)
-        .join("&")}`,
-    )
-  ).data;
+  (await cachedFetch(`https://api.qurancdn.com/api/${path}`, params)).json();
 
 /**
  * @typedef AudioFile

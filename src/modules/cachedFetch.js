@@ -9,7 +9,7 @@ let map = {};
 /**
  * @param {string} path
  */
-export function init(path) {
+export function initCache(path) {
   if (!existsSync(path)) mkdirSync(path);
 
   const basePath = resolve(path, "fetch");
