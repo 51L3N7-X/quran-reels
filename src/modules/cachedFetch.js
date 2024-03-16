@@ -35,17 +35,20 @@ export function initCache(path) {
  * @property {()=>Buffer} buffer
  * @property {()=>Object|Array} json
  * @property {()=>string} text
+ * @property {()=>(string|void)} path - cached file path (if any)
  */
 
 /**
  * @param {Buffer} buffer
+ * @param {string|void} path
  * @returns {cachedResponse} res
  */
-function mkResponse(buffer) {
+function mkResponse(buffer, path) {
   return {
     buffer: () => buffer,
     json: () => JSON.parse(buffer.toString()),
     text: () => buffer.toString(),
+    path: () => path,
   };
 }
 
@@ -74,17 +77,22 @@ export default async function cachedFetch(url, params = {}) {
     .join("&");
   const fullUrl = `${url}${parsedParams.length ? `?${parsedParams}` : ""}`;
 
-  if (inited && map[fullUrl])
-    return mkResponse(readFileSync(resolve(cacheFolderPath, map[fullUrl])));
+  if (inited && map[fullUrl]) {
+    const path = resolve(cacheFolderPath, map[fullUrl]);
+    const buffer = readFileSync(path);
+    return mkResponse(buffer, path);
+  }
 
   const res = await fetch(fullUrl);
   const buffer = Buffer.from(await res.arrayBuffer());
 
   if (inited) {
     const hash = mkFileHash();
-    writeFileSync(resolve(cacheFolderPath, hash), buffer);
+    const path = resolve(cacheFolderPath, hash);
+    writeFileSync(path, buffer);
     map[fullUrl] = hash;
     writeFileSync(mapPath, JSON.stringify(map));
+    return mkResponse(buffer, path);
   }
 
   return mkResponse(buffer);
