@@ -71,7 +71,7 @@ module.exports = async function fetchSurah(options) {
     if (versesData.pagination.next_page === null) break;
   }
 
-  while (options.from <= 0) options.to += verses.length;
+  while (options.from <= 0) options.from += verses.length;
   while (options.to <= 0) options.to += verses.length;
 
   return {
