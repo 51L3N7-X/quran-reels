@@ -37,6 +37,7 @@ const defaultImagesGeneratorOptions = {
  * @typedef ImageOptions
  * @type {Object}
  * @property {string} text - Arabic ayah text
+ * @property {(string,null)[]} fontOverwrites - Override specific part of the default arFont for this image
  * @property {number} highlight -  Index of the word that should be highlighted
  * @property {string} translation - English ayah translation text (default: "No translation provided")
  */
@@ -46,6 +47,7 @@ const defaultImagesGeneratorOptions = {
  */
 const defaultImageOptions = {
   text: "",
+  fontOverwrites: [],
   highlight: -1,
   translation: "No translation provided",
 };
@@ -91,6 +93,12 @@ export default class imagesGenerator {
     // assign default options
     const opt = { ...defaultImageOptions, ...options };
 
+    // apply fontOverrides
+    const fontParams = this.#options.arFont.split(" ");
+    for (const i in options.fontOverwrites)
+      if (options.fontOverwrites[i]) fontParams[i] = options.fontOverwrites[i];
+    const arFont = fontParams.join(" ");
+
     // set background
     this.#ctx.fillStyle = this.#options.background;
     this.#ctx.fillRect(0, 0, this.#options.width, this.#options.height);
@@ -109,7 +117,7 @@ export default class imagesGenerator {
     // render Arabic ayah
     this.#writeToImage({
       text: opt.text,
-      font: this.#options.arFont,
+      font: arFont,
       maxWidth: this.#options.arMaxWidth,
       highlight: opt.highlight,
       up: true,
