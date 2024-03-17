@@ -16,6 +16,7 @@ module.exports = {
     "implicit-arrow-linebreak": ["off"],
     "import/extensions": ["off"],
     "object-curly-newline": ["off"],
+    "no-restricted-syntax": ["off"],
 
     "prettier/prettier": [
       "error",
