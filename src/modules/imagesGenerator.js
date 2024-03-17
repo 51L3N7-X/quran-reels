@@ -1,4 +1,5 @@
 import nodeCanvas from "canvas";
+import fetch from "./cachedFetch.js";
 
 /**
  * @typedef ImagesGeneratorOptions
@@ -72,8 +73,10 @@ export default class imagesGenerator {
   constructor(options) {
     // assign default options
     this.#options = { ...defaultImagesGeneratorOptions, ...options };
+    this.#initCanvas();
+  }
 
-    // setup canvas and ctx
+  #initCanvas() {
     this.#canvas = nodeCanvas.createCanvas(
       this.#options.width,
       this.#options.height,
@@ -197,5 +200,31 @@ export default class imagesGenerator {
       const wordX = this.#centerX + lineWidth / 2 - rightMargin + wordWidth / 2;
       this.#ctx.fillText(word, wordX, lineY);
     }
+  }
+
+  /**
+   * ASSUMES THAT CACHED-FETCH IS ALREADY INITIALIZED
+   * @param {import("./fetchSurah").Ayah} ayah
+   * @param {number} highlight
+   * @param {number} fontFamilyIndex
+   * @returns {Buffer}
+   */
+  async generateFromAyah(ayah, highlight, fontFamilyIndex) {
+    const family = `p${ayah.page}`;
+    const font = await fetch(
+      `https://quran.com/fonts/quran/hafs/v1/ttf/${family}.ttf`,
+    );
+
+    nodeCanvas.registerFont(font.path(), { family });
+    this.#initCanvas();
+
+    const fontOverwrites = [...new Array(fontFamilyIndex).fill(null), family];
+
+    return this.generate({
+      text: ayah.quranText,
+      translation: ayah.translation,
+      fontOverwrites,
+      highlight,
+    });
   }
 }
