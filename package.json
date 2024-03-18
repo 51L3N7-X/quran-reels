@@ -14,7 +14,9 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.7",
-    "canvas": "^2.11.2"
+    "canvas": "^2.11.2",
+    "slideshow-video": "^1.0.2",
+    "fluent-ffmpeg": "^2.1.2"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
