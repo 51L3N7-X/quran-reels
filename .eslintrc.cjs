@@ -4,7 +4,7 @@ module.exports = {
     ecmaVersion: "latest",
   },
   rules: {
-    "max-len": ["error", { comments: 120 }],
+    "max-len": ["error", { comments: 120, code: 100 }],
 
     "no-console": ["off"],
     "no-plusplus": ["off"],
@@ -17,6 +17,7 @@ module.exports = {
     "import/extensions": ["off"],
     "object-curly-newline": ["off"],
     "no-restricted-syntax": ["off"],
+    "no-use-before-define": ["off"],
 
     "prettier/prettier": [
       "error",

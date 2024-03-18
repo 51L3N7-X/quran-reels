@@ -1,7 +1,6 @@
 import stream from "stream";
 import ffmpeg from "fluent-ffmpeg";
 import { createSlideshow } from "slideshow-video";
-import ImagesGenerator from "./imagesGenerator.js";
 import fetch from "./cachedFetch.js";
 
 export default class VideosGenerator {
@@ -12,7 +11,7 @@ export default class VideosGenerator {
   #ffmpegOptions;
 
   /**
-   * @param {ImagesGenerator} imagesGenerator
+   * @param {import("./imagesGenerator.js").default} imagesGenerator
    * @param {number} fontFamilyIndex
    * @param {import("slideshow-video").FfmpegOptions} [ffmpegOptions={}]
    */
@@ -25,7 +24,7 @@ export default class VideosGenerator {
    * @param {import("./fetchSurah.js").SurahData} surah
    * @returns {Buffer}
    */
-  async generateFromSurah(surah, ffmpegOptions = {}) {
+  async generateFromSurah(surah) {
     const images = [];
 
     for (let i = 0; i < surah.ayat.length; i++) {
@@ -43,7 +42,7 @@ export default class VideosGenerator {
         });
       }
 
-      //generate images highlighting nothing at the end of each ayah
+      // generate images highlighting nothing at the end of each ayah
       const imageBuffer = await this.#imagesGenerator.generateFromAyah(
         ayah,
         -1, // highlight nothing
