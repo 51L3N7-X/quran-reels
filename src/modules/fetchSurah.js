@@ -13,11 +13,18 @@ const fetch = async (path, params = {}) =>
  */
 
 /**
+ * @typedef QuranText
+ * @type {Object}
+ * @property {string} v1
+ * @property {string} v2
+ */
+
+/**
  * @typedef Ayah
  * @type {Object}
  * @property {number} id - Ayah number
  * @property {string} text - Arabic ayah text
- * @property {string} quranText - An array of [wrod, font] pairs
+ * @property {QuranText} quranText - An array of [wrod, font] pairs
  * @property {number} page - The number of the page that contains this ayah
  * @property {string} translation - English ayah translation text
  * @property {number} start - Ayah start timestamp
@@ -57,7 +64,7 @@ export default async function fetchSurah(options) {
   while (true) {
     const versesData = await fetch(`v4/verses/by_chapter/${options.id}`, {
       words: true,
-      word_fields: ["text_uthmani", "code_v1"],
+      word_fields: ["text_uthmani", "code_v1", "code_v2"],
       translations: options.translator,
       per_page: 50,
       page: page++,
@@ -91,7 +98,10 @@ export default async function fetchSurah(options) {
           .filter((w) => w.char_type_name === "word")
           .map((w) => w.text_uthmani)
           .join(" "),
-        quranText: v.words.map((w) => w.code_v1).join(" "),
+        quranText: {
+          v1: v.words.map((w) => w.code_v1).join(" "),
+          v2: v.words.map((w) => w.code_v2).join(" "),
+        },
         page: v.words[0].page_number,
         translation: v.translations[0].text.replace(/<.*>/, ""),
         //
