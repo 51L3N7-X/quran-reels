@@ -58,6 +58,11 @@ export default async function fetchSurah(options) {
     })
   ).audio_files[0];
 
+  audioData.verse_timings = audioData.verse_timings.map((v) => ({
+    ...v,
+    segments: v.segments.filter((s) => s.length > 2),
+  }));
+
   const verses = [];
   let page = 1;
 
@@ -105,13 +110,21 @@ export default async function fetchSurah(options) {
         page: v.words[0].page_number,
         translation: v.translations[0].text.replace(/<.*>/, ""),
         //
-        start: audioData.verse_timings[v.verse_number - 1].timestamp_from,
-        end: audioData.verse_timings[v.verse_number - 1].timestamp_to,
+        start: audioData.verse_timings[v.verse_number - 1].segments[0][1],
+        end: getLastArrayMember(
+          audioData.verse_timings[v.verse_number - 1].segments,
+        )[2],
         //
-        words: audioData.verse_timings[v.verse_number - 1].segments
-          .filter((s) => s.length > 2)
-          .map((s) => [s[0] - 1, s[1], s[2]]),
+        words: audioData.verse_timings[v.verse_number - 1].segments.map((s) => [
+          s[0] - 1,
+          s[1],
+          s[2],
+        ]),
         //
       })),
   };
+}
+
+function getLastArrayMember(array) {
+  return array[array.length - 1];
 }
