@@ -15,6 +15,7 @@ import fetch from "./cachedFetch.js";
  * @property {string} background - Image Background color (default: #000000)
  * @property {string} arFont - Font size and family used for rendering the Arabic ayah text
  * @property {number} fontFamilyIndex - The index of the font family name in arFont
+ * @property {"v1"|"v2"} quranFontVersion
  * @property {string} enFont - Font size and family used for rendering the English translation text
  */
 
@@ -33,6 +34,7 @@ const defaultImagesGeneratorOptions = {
   background: "#000000",
   arFont: "",
   fontFamilyIndex: 1,
+  quranFontVersion: "v1",
   enFont: "",
 };
 
@@ -210,10 +212,10 @@ export default class imagesGenerator {
    * @param {number} highlight
    * @returns {Buffer}
    */
-    const family = `p${ayah.page}`;
   async generateFromAyah(ayah, highlight) {
+    const family = `p${ayah.page}${this.#options.quranFontVersion}`;
     const font = await fetch(
-      `https://quran.com/fonts/quran/hafs/v1/ttf/${family}.ttf`,
+      `https://quran.com/fonts/quran/hafs/${this.#options.quranFontVersion}/ttf/p${ayah.page}.ttf`,
     );
 
     nodeCanvas.registerFont(font.path(), { family });
@@ -225,7 +227,7 @@ export default class imagesGenerator {
     ];
 
     return this.generate({
-      text: ayah.quranText,
+      text: ayah.quranText[this.#options.quranFontVersion],
       translation: ayah.translation,
       fontOverwrites,
       highlight,
