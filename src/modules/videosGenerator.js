@@ -25,6 +25,7 @@ export default class VideosGenerator {
    * @returns {Buffer}
    */
   async generateFromSurah(surah) {
+    /** @type {import("slideshow-video").InputImage[]} */
     const images = [];
 
     for (let i = 0; i < surah.ayat.length; i++) {
@@ -67,14 +68,15 @@ export default class VideosGenerator {
       duration: 1,
     });
 
+    // workaround for a bug in slideshow-video input validation
+    for (const img of images) img.filePath = process.env._;
+
     const audioData = await fetch(surah.audio.url);
     const audio = await trimAudio(
       audioData.buffer(),
       surah.ayat[0].start, // first ayah start
       surah.ayat[surah.ayat.length - 1].end, // last ayah end
     );
-
-    console.log("=".repeat(100));
 
     const slideShow = await createSlideshow(images, audio, {
       ffmpegOptions: this.#ffmpegOptions,
