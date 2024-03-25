@@ -1,10 +1,12 @@
 {
   "name": "quran-reels",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon ./src/index.js",
+    "dev": "cross-env NODE_NEV=development nodemon ./index.js",
+    "start": "node ./index.js`",
     "lint": "eslint .",
     "prepare": "husky install"
   },
@@ -12,7 +14,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.6.7"
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "axios": "^1.6.7",
+    "canvas": "^2.10.2",
+    "ffmpeg": "^0.0.4",
+    "fluent-ffmpeg": "^2.1.2",
+    "sharp": "^0.33.3",
+    "slideshow-video": "^1.0.2"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
