@@ -17,6 +17,7 @@
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "axios": "^1.6.7",
     "canvas": "^2.10.2",
+    "dotenv": "^16.4.5",
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "sharp": "^0.33.3",

@@ -218,7 +218,6 @@ export default class imagesGenerator {
       `https://quran.com/fonts/quran/hafs/${this.#options.quranFontVersion}/ttf/p${ayah.page}.ttf`,
     );
 
-    console.log(font.path());
     nodeCanvas.registerFont(font.path(), { family });
     this.#initCanvas();
 

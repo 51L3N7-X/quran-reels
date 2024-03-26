@@ -56,7 +56,7 @@ function mkResponse(buffer, path) {
  * @returns {string}
  */
 function mkFileHash() {
-  while (true) {
+  for (;;) {
     const hash = Array(3)
       .fill(0)
       .map(() => Math.random().toString(36).slice(2))
