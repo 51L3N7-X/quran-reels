@@ -19,6 +19,7 @@ import fetch from "./cachedFetch.js";
  * @property {string} enFont - Font size and family used for rendering the English translation text
  * @property {number} arLineMarginMultiplyer - multiplyer for Arabic ayah line margin (default: 1)
  * @property {number} enLineMarginMultiplyer - multiplyer for English translation line margin (default: 1)
+ * @property {number} maxLines - max lines per image, current lines are selected based on highlight (default: Infinity)
  */
 
 /**
@@ -40,6 +41,7 @@ const defaultImagesGeneratorOptions = {
   enFont: "",
   arLineMarginMultiplyer: 1,
   enLineMarginMultiplyer: 1,
+  maxLines: Infinity,
 };
 
 /**
@@ -152,7 +154,7 @@ export default class imagesGenerator {
     this.#ctx.font = options.font;
 
     // parse text into lines based on maxWidth, also get information about the highlight word
-    const lines = [""];
+    let lines = [""];
     const words = options.text.split(" ");
     let l = 0;
     let highlightWord = {
@@ -175,6 +177,18 @@ export default class imagesGenerator {
 
     // remove extra space from last line
     lines[l] = lines[l].slice(0, -1);
+
+    // select lines based on maxLines option and highlightd word (if any)
+    if (highlightWord.line !== -1 && this.#options.maxLines !== Infinity) {
+      const start =
+        Math.floor(highlightWord.line / this.#options.maxLines) *
+        this.#options.maxLines;
+      const end = start + this.#options.maxLines;
+      console.log(lines);
+      lines = lines.slice(start, end);
+      console.log(start, end, lines);
+      highlightWord.line %= this.#options.maxLines;
+    }
 
     // TODO: find a better way to do this
     const baseLineHeight = parseInt(this.#ctx.font.match(/\d+/)[0], 10);
