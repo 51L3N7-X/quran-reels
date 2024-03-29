@@ -17,6 +17,8 @@ import fetch from "./cachedFetch.js";
  * @property {number} fontFamilyIndex - The index of the font family name in arFont
  * @property {"v1"|"v2"} quranFontVersion
  * @property {string} enFont - Font size and family used for rendering the English translation text
+ * @property {number} arLineMarginMultiplyer - multiplyer for Arabic ayah line margin (default: 1)
+ * @property {number} enLineMarginMultiplyer - multiplyer for English translation line margin (default: 1)
  */
 
 /**
@@ -36,6 +38,8 @@ const defaultImagesGeneratorOptions = {
   fontFamilyIndex: 1,
   quranFontVersion: "v1",
   enFont: "",
+  arLineMarginMultiplyer: 1,
+  enLineMarginMultiplyer: 1,
 };
 
 /**
@@ -173,7 +177,12 @@ export default class imagesGenerator {
     lines[l] = lines[l].slice(0, -1);
 
     // TODO: find a better way to do this
-    const lineHeight = parseInt(this.#ctx.font.match(/\d+/)[0], 10);
+    const baseLineHeight = parseInt(this.#ctx.font.match(/\d+/)[0], 10);
+    const lineHeight =
+      baseLineHeight *
+      (options.up
+        ? this.#options.arLineMarginMultiplyer
+        : this.#options.enLineMarginMultiplyer);
 
     // render line by line
     for (let i = 0; i < lines.length; i++) {
