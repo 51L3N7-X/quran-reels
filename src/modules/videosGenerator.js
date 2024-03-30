@@ -9,7 +9,7 @@ import fetch from "./cachedFetch.js";
 ffmpeg.setFfmpegPath(path);
 
 export default class VideosGenerator {
-  /** @type {ImagesGenerator} */
+  /** @type {import("./imagesGenerator.js").default} */
   #imagesGenerator;
 
   /** @type {import("slideshow-video").FfmpegOptions} */
