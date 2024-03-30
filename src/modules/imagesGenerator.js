@@ -184,9 +184,7 @@ export default class imagesGenerator {
         Math.floor(highlightWord.line / this.#options.maxLines) *
         this.#options.maxLines;
       const end = start + this.#options.maxLines;
-      console.log(lines);
       lines = lines.slice(start, end);
-      console.log(start, end, lines);
       highlightWord.line %= this.#options.maxLines;
     }
 
