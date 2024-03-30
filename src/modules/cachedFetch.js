@@ -83,8 +83,13 @@ export default async function cachedFetch(url, params = {}) {
     return mkResponse(buffer, path);
   }
 
-  const res = await fetch(fullUrl);
-  const buffer = Buffer.from(await res.arrayBuffer());
+  let buffer;
+  if (url.startsWith("file://")) {
+    buffer = readFileSync(url.slice(7));
+  } else {
+    const res = await fetch(fullUrl);
+    buffer = Buffer.from(await res.arrayBuffer());
+  }
 
   if (inited) {
     const hash = mkFileHash();
