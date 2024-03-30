@@ -79,6 +79,12 @@ export default class imagesGenerator {
   /** @type {number} */
   #centerY;
 
+  /** @type {number} */
+  #lastHighlightedText = "";
+
+  /** @type {number} */
+  #lastHighlightedWordLine = -1;
+
   /** @param {ImagesGeneratorOptions} options */
   constructor(options) {
     // assign default options
@@ -179,13 +185,25 @@ export default class imagesGenerator {
     lines[l] = lines[l].slice(0, -1);
 
     // select lines based on maxLines option and highlightd word (if any)
-    if (highlightWord.line !== -1 && this.#options.maxLines !== Infinity) {
-      const start =
-        Math.floor(highlightWord.line / this.#options.maxLines) *
-        this.#options.maxLines;
-      const end = start + this.#options.maxLines;
-      lines = lines.slice(start, end);
-      highlightWord.line %= this.#options.maxLines;
+    if (options.up && this.#options.maxLines !== Infinity) {
+      if (highlightWord.line !== -1) {
+        const start =
+          Math.floor(highlightWord.line / this.#options.maxLines) *
+          this.#options.maxLines;
+        const end = start + this.#options.maxLines;
+        lines = lines.slice(start, end);
+        this.#lastHighlightedText = options.text;
+        this.#lastHighlightedWordLine = highlightWord.line;
+        highlightWord.line %= this.#options.maxLines;
+      } else if (this.#lastHighlightedText === options.text) {
+        const start =
+          Math.floor(this.#lastHighlightedWordLine / this.#options.maxLines) *
+          this.#options.maxLines;
+        const end = start + this.#options.maxLines;
+        lines = lines.slice(start, end);
+      } else {
+        lines = lines.slice(0, this.#options.maxLines);
+      }
     }
 
     // TODO: find a better way to do this
