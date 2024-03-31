@@ -17,6 +17,7 @@
     "@aws-sdk/client-s3": "^3.540.0",
     "@aws-sdk/lib-storage": "^3.540.0",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffprobe-installer/ffprobe": "^2.1.2",
     "axios": "^1.6.7",
     "canvas": "^2.10.2",
     "dotenv": "^16.4.5",

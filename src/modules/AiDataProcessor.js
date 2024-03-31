@@ -1,5 +1,8 @@
 import { resolve } from "path";
 import ffmpeg from "fluent-ffmpeg";
+import { path } from "@ffprobe-installer/ffprobe";
+
+ffmpeg.setFfprobePath(path);
 
 /**
  * @typedef AI_Data
