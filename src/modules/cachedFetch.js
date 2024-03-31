@@ -75,7 +75,7 @@ function mkFileHash() {
 /**
  * @param {string} url
  * @param {Object} params
- * @returns {cachedResponse} response
+ * @returns {Promise<cachedResponse>} response
  */
 export default async function cachedFetch(url, params = {}) {
   const parsedParams = Object.entries(params)

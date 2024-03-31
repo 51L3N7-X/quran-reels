@@ -25,7 +25,7 @@ import axios from "axios";
 /**
  * @param {string} accessToken - Facebook App access token
  * @param {string} containerId - Instagram container id
- * @returns {uploadStatusData}
+ * @returns {Promise<uploadStatusData>}
  */
 export const uploadStatus = async (accessToken, containerId) => {
   const response = await axios.get(
@@ -46,7 +46,7 @@ export const uploadStatus = async (accessToken, containerId) => {
  * @param {string} accessToken
  * @param {string} instagramAccountId
  * @param {string} creationId
- * @returns {containerData}
+ * @returns {Promise<containerData>}
  */
 export const publishContainer = async (
   accessToken,
@@ -65,7 +65,7 @@ export const publishContainer = async (
  *
  * @param {string} accessToken
  * @param {string} mediaId
- * @returns {permalinkData}
+ * @returns {Promise<permalinkData>}
  */
 export const getPermalink = async (accessToken, mediaId) => {
   const response = await axios.get(
@@ -83,7 +83,7 @@ export const getPermalink = async (accessToken, mediaId) => {
  * @param {string=} data.caption - Reel caption
  * @param {string} data.videoURL - Video url to upload
  * @param {string=} data.coverURL - Video cover image url
- * @returns {containerData}
+ * @returns {Promise<containerData>}
  */
 
 export default async function toContainer({

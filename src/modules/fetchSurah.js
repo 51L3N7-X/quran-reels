@@ -48,7 +48,7 @@ const fetch = async (path, params = {}) =>
  * @param {number} options.from - First ayah index (1-indexed, 0 = last)
  * @param {number} options.to - Last ayah index (1-indexed, 0 = last)
  *
- * @returns {SurahData} surahData
+ * @returns {Promise<SurahData>} surahData
  */
 export default async function fetchSurah(options) {
   const audioData = (

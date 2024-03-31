@@ -249,7 +249,7 @@ export default class imagesGenerator {
    * ASSUMES THAT CACHED-FETCH IS ALREADY INITIALIZED
    * @param {import("./fetchSurah").Ayah} ayah
    * @param {number} highlight
-   * @returns {Buffer}
+   * @returns {Promise<Buffer>}
    */
   async generateFromAyah(ayah, highlight) {
     const family = `p${ayah.page}${this.#options.quranFontVersion}`;

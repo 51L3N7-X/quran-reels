@@ -27,7 +27,7 @@ export default class VideosGenerator {
 
   /**
    * @param {import("./fetchSurah.js").SurahData} surah
-   * @returns {Buffer}
+   * @returns {Promise<Buffer>}
    */
   async generateFromSurah(surah) {
     /** @type {import("slideshow-video").InputImage[]} */
