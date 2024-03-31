@@ -1,4 +1,10 @@
-import { existsSync, mkdirSync, writeFileSync, readFileSync } from "fs";
+import {
+  existsSync,
+  mkdirSync,
+  writeFileSync,
+  readFileSync,
+  unlinkSync,
+} from "fs";
 import { resolve } from "path";
 
 let inited = false;
@@ -103,4 +109,33 @@ export default async function cachedFetch(url, params = {}) {
   }
 
   return mkResponse(buffer);
+}
+
+/**
+ * @param {string|RegExp|(url: string)=>boolean|undefined|null} match
+ * @returns {number} - delete count
+ */
+export function flush(match) {
+  if (!inited) return 0;
+
+  let deleteCount = 0;
+  const del = (url) => {
+    const path = resolve(cacheFolderPath, map[url]);
+    unlinkSync(path);
+    delete map[url];
+    deleteCount++;
+  };
+
+  if (match instanceof RegExp) {
+    for (const url of Object.keys(map)) if (match.test(url)) del(url);
+  } else if (typeof match === "function") {
+    for (const url of Object.keys(map)) if (match(url)) del(url);
+  } else if (typeof match === "string") {
+    for (const url of Object.keys(map)) if (match === url) del(url);
+  } else if (match === undefined || match === null) {
+    for (const url of Object.keys(map)) del(url);
+  }
+
+  writeFileSync(mapPath, JSON.stringify(map));
+  return deleteCount;
 }
