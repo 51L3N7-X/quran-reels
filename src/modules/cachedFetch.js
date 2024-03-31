@@ -83,13 +83,15 @@ export default async function cachedFetch(url, params = {}) {
     return mkResponse(buffer, path);
   }
 
-  let buffer;
+  // file urls don't get cached, but return path with the response
   if (url.startsWith("file://")) {
-    buffer = readFileSync(url.slice(7));
-  } else {
-    const res = await fetch(fullUrl);
-    buffer = Buffer.from(await res.arrayBuffer());
+    const path = url.slice(7);
+    const buffer = readFileSync(path);
+    return mkResponse(buffer, path);
   }
+
+  const res = await fetch(fullUrl);
+  const buffer = Buffer.from(await res.arrayBuffer());
 
   if (inited) {
     const hash = mkFileHash();
