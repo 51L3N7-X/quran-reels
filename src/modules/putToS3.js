@@ -13,13 +13,19 @@ export default class S3 {
 
   #id;
 
-  constructor() {
+  /**
+   * @param {Object} data - AWS S3 Settings and Credentials
+   * @param {string=} data.id - AWS Access Key Id
+   * @param {string=} data.secret - AWS Secret Access Key
+   * @param {string=} data.region - AWs Region
+   */
+  constructor({ id, secret, region }) {
     this.#client = new S3Client({
       credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        accessKeyId: id || process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: secret || process.env.AWS_SECRET_ACCESS_KEY,
       },
-      region: "eu-north-1",
+      region: region || "eu-north-1",
     });
     this.#id = uuid();
     this.clear();
