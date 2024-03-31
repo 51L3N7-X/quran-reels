@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { resolve } from "path";
 import ffmpeg from "fluent-ffmpeg";
 import { path } from "@ffprobe-installer/ffprobe";
@@ -80,7 +81,7 @@ export default async function processAiData(surah, data, audioFilePath) {
     }
 
     let words = [];
-    function pushAyah() {
+    const pushAyah = () => {
       res.ayat.push({
         ...surah.ayat[ayahIndex++],
         words,
@@ -89,7 +90,7 @@ export default async function processAiData(surah, data, audioFilePath) {
       });
       words = [];
       wordIndex = 0;
-    }
+    };
 
     // convert Ai generated timestamps to FetchSurah-like timestamps
     for (const segmentWord of segment.words) {
@@ -190,11 +191,11 @@ export function normalizeArabicText(str) {
 }
 
 /**
- * @param {string} path
+ * @param {string} audioPath
  * @returns {Promise<import("./fetchSurah.js").AudioFile>}
  */
-function getAudioData(path) {
-  const absPath = resolve(path);
+function getAudioData(audioPath) {
+  const absPath = resolve(audioPath);
   return new Promise((res, rej) => {
     ffmpeg.ffprobe(absPath, (err, metadata) => {
       if (err) rej(err);

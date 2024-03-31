@@ -18,7 +18,7 @@ module.exports = {
     "object-curly-newline": ["off"],
     "no-restricted-syntax": ["off"],
     "no-use-before-define": ["off"],
-
+    "function-paren-newline": "off",
     "prettier/prettier": [
       "error",
       {
