@@ -1,7 +1,7 @@
 import whisper_timestamped as whisper
 import json
 
-# Load audio and model (same as your previous code)
+# Load audio and model
 audio = whisper.load_audio("tt.mp3")
 model = whisper.load_model("large", device="cuda")
 result = whisper.transcribe(model, audio, language="ar")
