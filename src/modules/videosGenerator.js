@@ -15,14 +15,18 @@ export default class VideosGenerator {
   /** @type {import("slideshow-video").FfmpegOptions} */
   #ffmpegOptions;
 
+  /** @type {boolean} */
+  #highlightWords;
+
   /**
    * @param {import("./imagesGenerator.js").default} imagesGenerator
-   * @param {number} fontFamilyIndex
    * @param {import("slideshow-video").FfmpegOptions} [ffmpegOptions={}]
+   * @param {boolean} [highlightWords=true]
    */
-  constructor(imagesGenerator, ffmpegOptions) {
+  constructor(imagesGenerator, ffmpegOptions = {}, highlightWords = true) {
     this.#imagesGenerator = imagesGenerator;
     this.#ffmpegOptions = ffmpegOptions;
+    this.#highlightWords = highlightWords;
   }
 
   /**
@@ -39,7 +43,7 @@ export default class VideosGenerator {
         // generate images highlighting each word
         const imageBuffer = await this.#imagesGenerator.generateFromAyah(
           ayah,
-          word[0],
+          this.#highlightWords ? word[0] : -1,
         );
 
         images.push({
