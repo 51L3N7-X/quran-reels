@@ -1,6 +1,125 @@
 import nodeCanvas from "canvas";
 import fetch from "./cachedFetch.js";
 
+let isSurahNamesFontRegistered = false;
+const surahNames = [
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+];
+
 /**
  * @typedef ImagesGeneratorOptions
  * @type {Object}
@@ -20,6 +139,10 @@ import fetch from "./cachedFetch.js";
  * @property {number} arLineMarginMultiplyer - multiplyer for Arabic ayah line margin (default: 1)
  * @property {number} enLineMarginMultiplyer - multiplyer for English translation line margin (default: 1)
  * @property {number} maxLines - max lines per image, current lines are selected based on highlight (default: Infinity)
+ * @property {boolean} surahNameEnabled - whether to render surah name or not  (default: true)
+ * @property {boolean} surahWordInSurahName - whether to add the word "surah" to surah name (default: true)
+ * @property {number} surahNameTopMargin - extra pixels between surah name and the top of the image (default: 20)
+ * @property {number} surahNameFontSize - surah name font size in pixels (default: 72)
  */
 
 /**
@@ -42,6 +165,10 @@ const defaultImagesGeneratorOptions = {
   arLineMarginMultiplyer: 1,
   enLineMarginMultiplyer: 1,
   maxLines: Infinity,
+  surahNameEnabled: true,
+  surahWordInSurahName: true,
+  surahNameTopMargin: 20,
+  surahNameFontSize: 72,
 };
 
 /**
@@ -51,6 +178,7 @@ const defaultImagesGeneratorOptions = {
  * @property {(string,null)[]} fontOverwrites - Override specific part of the default arFont for this image
  * @property {number} highlight -  Index of the word that should be highlighted
  * @property {string} translation - English ayah translation text (default: "No translation provided")
+ * @property {number|void} surahId - used to render surah name, if any (default: none)
  */
 
 /**
@@ -61,6 +189,7 @@ const defaultImageOptions = {
   fontOverwrites: [],
   highlight: -1,
   translation: "No translation provided",
+  surahId: undefined,
 };
 
 export default class imagesGenerator {
@@ -106,9 +235,19 @@ export default class imagesGenerator {
 
   /**
    * @param {ImageOptions} options
-   * @returns {Buffer}
+   * @returns {Promise<Buffer>}
    */
-  generate(options) {
+  async generate(options) {
+    // register surah_name font if needed
+    if (this.#options.surahNameEnabled && !isSurahNamesFontRegistered) {
+      const font = await fetch(
+        "https://quran.com/fonts/quran/surah-names/v1/sura_names.ttf",
+      );
+      nodeCanvas.registerFont(font.path(), { family: "surahnames" });
+      this.#initCanvas();
+      isSurahNamesFontRegistered = true;
+    }
+
     // assign default options
     const opt = Object.assign(defaultImageOptions, options);
 
@@ -124,6 +263,10 @@ export default class imagesGenerator {
 
     // text color
     this.#ctx.fillStyle = this.#options.color;
+
+    // render surah name (if any)
+    if (this.#options.surahNameEnabled && options.surahId)
+      this.#renderSurahName(options.surahId);
 
     // render English translation
     this.#writeToImage({
@@ -143,6 +286,20 @@ export default class imagesGenerator {
     });
 
     return this.#canvas.toBuffer(this.#options.format);
+  }
+
+  /**
+   * @param {surahId} surahId
+   */
+  #renderSurahName(surahId) {
+    let text = surahNames[surahId];
+    if (this.#options.surahWordInSurahName) text += surahNames[0];
+    this.#ctx.font = `${this.#options.surahNameFontSize}px surahnames`;
+    this.#ctx.fillText(
+      text,
+      this.#centerX,
+      this.#options.surahNameFontSize + this.#options.surahNameTopMargin,
+    );
   }
 
   /**
@@ -249,9 +406,10 @@ export default class imagesGenerator {
    * ASSUMES THAT CACHED-FETCH IS ALREADY INITIALIZED
    * @param {import("./fetchSurah").Ayah} ayah
    * @param {number} highlight
+   * @param {number} surahId
    * @returns {Promise<Buffer>}
    */
-  async generateFromAyah(ayah, highlight) {
+  async generateFromAyah(ayah, highlight, surahId) {
     const family = `p${ayah.page}${this.#options.quranFontVersion}`;
     const font = await fetch(
       `https://quran.com/fonts/quran/hafs/${this.#options.quranFontVersion}/ttf/p${ayah.page}.ttf`,
@@ -265,11 +423,12 @@ export default class imagesGenerator {
       family,
     ];
 
-    return this.generate({
+    return /* await */ this.generate({
       text: ayah.quranText[this.#options.quranFontVersion],
       translation: ayah.translation,
       fontOverwrites,
       highlight,
+      surahId,
     });
   }
 }

@@ -44,6 +44,7 @@ export default class VideosGenerator {
         const imageBuffer = await this.#imagesGenerator.generateFromAyah(
           ayah,
           this.#highlightWords ? word[0] : -1,
+          surah.id,
         );
 
         images.push({
@@ -56,6 +57,7 @@ export default class VideosGenerator {
       const imageBuffer = await this.#imagesGenerator.generateFromAyah(
         ayah,
         -1, // highlight nothing
+        surah.id,
       );
 
       const nextAyah = surah.ayat[i + 1] || { start: ayah.end + 1000 / 25 };
@@ -70,6 +72,7 @@ export default class VideosGenerator {
     const imageBuffer = await this.#imagesGenerator.generateFromAyah(
       surah.ayat[surah.ayat.length - 1],
       -1,
+      surah.id,
     );
 
     images.push({
