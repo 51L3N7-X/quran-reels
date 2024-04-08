@@ -1,0 +1,25 @@
+#image settings
+image:
+  arMaxWidth: 650
+  enMaxWidth: 400
+  margin: 64
+  color: "#ffffff"
+  highlightColor: "#ffaa55"
+  background: "#000000"
+  arFont: "48px Arial"
+  enFont: "32px Arial"
+  width: 720
+  height: 1280
+  arLineMarginMultiplyer: 1.5
+  enLineMarginMultiplyer: 1
+  surahNameEnabled: true
+  fontFamilyIndex: 1
+  quranFontVersion: "v2"
+
+#video settings
+video:
+  highlightWords: true
+
+fetch:
+  reciter: 7
+  translator: 131

@@ -1,6 +1,6 @@
 import "dotenv/config";
 import axios from "axios";
-import sleep from "../utils/sleep";
+import sleep from "../utils/sleep.js";
 
 /**
  * @typedef containerData
@@ -39,8 +39,10 @@ export default class Reel {
     this.#instagramAccountId =
       instagramAccountId || process.env.INSTAGRAM_ACCOUNT_ID;
 
-    this.version = `$v${version}.0` || "v19.0";
+    this.version = version ? `$v${version}.0` : "v19.0";
     if (!this.#accessToken) throw new Error("Facebook Access Token not found.");
+    if (!this.#instagramAccountId)
+      throw new Error("Instagram Account Id not found");
   }
 
   /**
