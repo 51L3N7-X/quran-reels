@@ -241,13 +241,15 @@ async function questions(type) {
       },
     },
     ...(type === "API"
-      ? {
-          type: "input",
-          name: "reciter",
-          message: "What is the reciter id?",
-          default: settings.fetch.reciter,
-        }
-      : {}),
+      ? [
+          {
+            type: "input",
+            name: "reciter",
+            message: "What is the reciter id?",
+            default: settings.fetch.reciter,
+          },
+        ]
+      : []),
     {
       type: "input",
       name: "translator",
