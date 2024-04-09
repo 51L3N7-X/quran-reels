@@ -129,7 +129,7 @@ async function AIChose() {
   const surah = await processAiData(
     surahData,
     JSON.parse(fs.readFileSync("./data/data.json")),
-    "./video.mp3",
+    "./audio/audio.webm",
   );
 
   const generator = new VideosGenerator(
@@ -137,7 +137,7 @@ async function AIChose() {
     {
       x264Preset: "ultrafast",
     },
-    answers.highlightWords || settings.video.highlightWords,
+    answers.highlightWords,
   );
 
   console.log(gradient.morning("Video processing"));
@@ -173,7 +173,7 @@ async function APIChose() {
     {
       x264Preset: "ultrafast",
     },
-    answers.highlightWords || settings.video.highlightWords,
+    answers.highlightWords,
   );
 
   console.log(gradient.morning("Video processing"));

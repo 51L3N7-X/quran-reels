@@ -101,7 +101,7 @@ export default class VideosGenerator {
         useTransitions: false,
       },
       imageOptions: {
-        lastImageExtraDuration: 0,
+        lastImageExtraDuration: 1000,
       },
     });
 
@@ -126,7 +126,7 @@ function trimAudio(buffer, start, end) {
     ffmpeg({ source: stream.Readable.from(buffer, { objectMode: false }) })
       .format("mp3")
       .seek(start / 1000)
-      .duration((end - start) / 1000)
+      .duration((end + 1000 - start) / 1000)
       .writeToStream(outputBufferStream);
   });
 }
