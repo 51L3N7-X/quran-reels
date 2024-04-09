@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import inquirer from "inquirer";
 import gradient from "gradient-string";
 import chalk from "chalk";
@@ -35,7 +36,7 @@ async function main() {
 
   const answer = await choices();
   if (answer.choice === "Create and upload video from AI data") {
-    const video = await AIChoosed();
+    const video = await AIChose();
 
     console.log(
       gradient.passion("Preview video:"),
@@ -56,7 +57,7 @@ async function main() {
       await publish(video);
     }
   } else if (answer.choice === "Create and upload video from API (quran.com)") {
-    const video = await APIChoosed();
+    const video = await APIChose();
 
     console.log(
       gradient.passion("Preview video:"),
@@ -106,86 +107,8 @@ _-----\`  |(,__,__/__/_ .
   );
 }
 
-async function AIChoosed() {
-  const validate = (value) => {
-    if (!+value) return "Please enter a valid number";
-    return true;
-  };
-  let answers = await inquirer.prompt([
-    {
-      type: "input",
-      name: "id",
-      message: "What is the number of Surah (1-114)?",
-      validate(value) {
-        if (!+value || value > 114 || value <= 0)
-          return "Please enter a valid number";
-        return true;
-      },
-    },
-    {
-      type: "input",
-      name: "from",
-      message: "From which Ayah does the data begin?",
-      validate,
-    },
-    {
-      type: "input",
-      name: "to",
-      message: "What Ayah does the data end with?",
-      validate,
-    },
-    {
-      type: "input",
-      name: "translator",
-      message: "What is the translator id?",
-      default: settings.fetch.translator,
-    },
-    {
-      type: "input",
-      name: "background",
-      message: "What is the background color? (#<hex number only>)",
-      default: "#000000",
-      validate(value) {
-        const regex = /^#[0-9A-Fa-f]{6}$/i; // Regex for valid hex color code
-        if (!regex.test(value)) {
-          return "Please enter a valid hex color code (e.g., #FFFFFF)";
-        }
-        return true;
-      },
-    },
-    {
-      type: "confirm",
-      message: "Want to add highlight?",
-      name: "highlightWords",
-    },
-  ]);
-
-  if (answers.highlightWords) {
-    const plusQues = await inquirer.prompt({
-      type: "input",
-      message: "What is the color of highlight text?",
-      default: "#ffaa55",
-      name: "highlightColor",
-      validate(value) {
-        const regex = /^#[0-9A-Fa-f]{6}$/i; // Regex for valid hex color code
-        if (!regex.test(value)) {
-          return "Please enter a valid hex color code (e.g., #FFFFFF)";
-        }
-        return true;
-      },
-    });
-    answers = { ...answers, ...plusQues };
-  }
-
-  const additionalQues = await inquirer.prompt([
-    {
-      type: "confirm",
-      message: "Add Surah name?",
-      name: "surahNameEnabled",
-    },
-  ]);
-
-  answers = { ...answers, ...additionalQues };
+async function AIChose() {
+  const answers = await questions("AI");
 
   const imagesGenerator = new ImagesGenerator({
     ...settings.image,
@@ -226,92 +149,8 @@ async function AIChoosed() {
   return videoData;
 }
 
-async function APIChoosed() {
-  const validate = (value) => {
-    if (!+value) return "Please enter a valid number";
-    return true;
-  };
-  let answers = await inquirer.prompt([
-    {
-      type: "input",
-      name: "id",
-      message: "What is the number of Surah (1-114)?",
-      validate(value) {
-        if (!+value || value > 114 || value <= 0)
-          return "Please enter a valid number";
-        return true;
-      },
-    },
-    {
-      type: "input",
-      name: "reciter",
-      message: "What is the reciter id?",
-      default: settings.fetch.reciter,
-    },
-    {
-      type: "input",
-      name: "translator",
-      message: "What is the translator id?",
-      default: settings.fetch.translator,
-    },
-    {
-      type: "input",
-      name: "from",
-      message: "From which Ayah does the data begin?",
-      validate,
-    },
-    {
-      type: "input",
-      name: "to",
-      message: "What Ayah does the data end with?",
-      validate,
-    },
-    {
-      type: "input",
-      name: "background",
-      message: "What is the background color? (#<hex number only>)",
-      default: "#000000",
-      validate(value) {
-        const regex = /^#[0-9A-Fa-f]{6}$/i; // Regex for valid hex color code
-        if (!regex.test(value)) {
-          return "Please enter a valid hex color code (e.g., #FFFFFF)";
-        }
-        return true;
-      },
-    },
-    {
-      type: "confirm",
-      message: "Want to add highlight?",
-      name: "highlightWords",
-    },
-  ]);
-
-  if (answers.highlightWords) {
-    const plusQues = await inquirer.prompt({
-      type: "input",
-      message: "What is the color of highlight text?",
-      default: "#ffaa55",
-      name: "highlightColor",
-      validate(value) {
-        const regex = /^#[0-9A-Fa-f]{6}$/i; // Regex for valid hex color code
-        if (!regex.test(value)) {
-          return "Please enter a valid hex color code (e.g., #FFFFFF)";
-        }
-        return true;
-      },
-    });
-    answers = { ...answers, ...plusQues };
-  }
-
-  const additionalQues = await inquirer.prompt([
-    {
-      type: "confirm",
-      message: "Add Surah name?",
-      name: "surahNameEnabled",
-    },
-  ]);
-
-  answers = { ...answers, ...additionalQues };
+async function APIChose() {
+  const answers = await questions("API");
 
   const imagesGenerator = new ImagesGenerator({
     ...settings.image,
@@ -383,4 +222,94 @@ async function publish(video) {
   publishSpinner.stop();
 
   console.log(gradient.retro(`Published successfully: ${reelURL}`));
+}
+
+async function questions(type) {
+  const validate = (value) => {
+    if (!+value) return "Please enter a valid number";
+    return true;
+  };
+  let answers = await inquirer.prompt([
+    {
+      type: "input",
+      name: "id",
+      message: "What is the number of Surah (1-114)?",
+      validate(value) {
+        if (!+value || value > 114 || value <= 0)
+          return "Please enter a valid number";
+        return true;
+      },
+    },
+    ...(type === "API"
+      ? {
+          type: "input",
+          name: "reciter",
+          message: "What is the reciter id?",
+          default: settings.fetch.reciter,
+        }
+      : {}),
+    {
+      type: "input",
+      name: "translator",
+      message: "What is the translator id?",
+      default: settings.fetch.translator,
+    },
+    {
+      type: "input",
+      name: "from",
+      message: "From which Ayah does the data begin?",
+      validate,
+    },
+    {
+      type: "input",
+      name: "to",
+      message: "What Ayah does the data end with?",
+      validate,
+    },
+    {
+      type: "input",
+      name: "background",
+      message: "What is the background color? (#<hex number only>)",
+      default: "#000000",
+      validate(value) {
+        const regex = /^#[0-9A-Fa-f]{6}$/i; // Regex for valid hex color code
+        if (!regex.test(value)) {
+          return "Please enter a valid hex color code (e.g., #FFFFFF)";
+        }
+        return true;
+      },
+    },
+    {
+      type: "confirm",
+      message: "Want to add highlight?",
+      name: "highlightWords",
+    },
+  ]);
+
+  if (answers.highlightWords) {
+    const plusQues = await inquirer.prompt({
+      type: "input",
+      message: "What is the color of highlight text?",
+      default: "#ffaa55",
+      name: "highlightColor",
+      validate(value) {
+        const regex = /^#[0-9A-Fa-f]{6}$/i; // Regex for valid hex color code
+        if (!regex.test(value)) {
+          return "Please enter a valid hex color code (e.g., #FFFFFF)";
+        }
+        return true;
+      },
+    });
+    answers = { ...answers, ...plusQues };
+  }
+
+  const additionalQues = await inquirer.prompt([
+    {
+      type: "confirm",
+      message: "Add Surah name?",
+      name: "surahNameEnabled",
+    },
+  ]);
+
+  return { ...answers, ...additionalQues };
 }
