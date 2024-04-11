@@ -4,8 +4,8 @@ image:
   enMaxWidth: 400
   margin: 64
   color: "#ffffff"
-  highlightColor: "#ffaa55"
-  background: "#000000"
+  highlightColor: "#eedda3"
+  background: "#101415"
   arFont: "48px Arial"
   enFont: "32px Arial"
   width: 720

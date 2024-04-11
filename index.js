@@ -272,7 +272,7 @@ async function questions(type) {
       type: "input",
       name: "background",
       message: "What is the background color? (#<hex number only>)",
-      default: "#000000",
+      default: settings.image.background,
       validate(value) {
         const regex = /^#[0-9A-Fa-f]{6}$/i; // Regex for valid hex color code
         if (!regex.test(value)) {
@@ -292,7 +292,7 @@ async function questions(type) {
     const plusQues = await inquirer.prompt({
       type: "input",
       message: "What is the color of highlight text?",
-      default: "#ffaa55",
+      default: settings.image.highlightColor,
       name: "highlightColor",
       validate(value) {
         const regex = /^#[0-9A-Fa-f]{6}$/i; // Regex for valid hex color code
